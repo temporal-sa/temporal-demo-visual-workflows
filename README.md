@@ -166,6 +166,8 @@ make dev
 | `make test` | Go tests (the Workflow test suite) and `svelte-check` |
 | `make docker` | The same stack in containers |
 
+To present the demo, follow [RUNBOOK.md](RUNBOOK.md): the walkthrough beat by beat, and where in the code each part happens.
+
 ### Configuration
 
 Every process reads Temporal settings from the standard environment variables (`TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, `TEMPORAL_API_KEY`, `TEMPORAL_TLS_*`) and ignores the CLI config file.
