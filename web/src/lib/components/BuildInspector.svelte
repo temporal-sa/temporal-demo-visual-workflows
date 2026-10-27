@@ -6,6 +6,7 @@
 	import NodeForm from './NodeForm.svelte';
 	import { app } from '$lib/state.svelte';
 	import { flowPaths } from '$lib/layout';
+	import { removeSteps } from '$lib/edit';
 
 	const node = $derived(app.flow?.nodes.find((n) => n.id === app.selectedNodeId) ?? null);
 	const flowProblems = $derived(app.problems.filter((p) => !p.nodeId));
@@ -14,9 +15,7 @@
 	function removeNode() {
 		const flow = app.flow;
 		if (!flow || !node || node.type === 'trigger') return;
-		const id = node.id;
-		flow.nodes = flow.nodes.filter((n) => n.id !== id);
-		flow.edges = flow.edges.filter((e) => e.source !== id && e.target !== id);
+		removeSteps(flow, new Set([node.id]));
 		app.selectedNodeId = null;
 		app.structure++;
 	}

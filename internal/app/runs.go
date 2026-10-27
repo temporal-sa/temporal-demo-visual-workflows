@@ -290,10 +290,10 @@ func (s *Server) listFlowRuns(w http.ResponseWriter, r *http.Request, u user) {
 
 // ownRun authorizes a Workflow ID against the user before anything touches it.
 // Agent loops are child Workflows of a different type and are reached
-// through their step instead.
+// through their step instead; copilot conversations through their flow.
 func (s *Server) ownRun(w http.ResponseWriter, r *http.Request, u user) (string, bool) {
 	wid := r.PathValue("wid")
-	if !strings.HasPrefix(wid, s.prefix(u.Key)) || strings.Contains(wid, "-agent-") {
+	if !strings.HasPrefix(wid, s.prefix(u.Key)) || strings.Contains(wid, "-agent-") || strings.HasSuffix(wid, copilotSuffix) {
 		writeError(w, http.StatusNotFound, errors.New("run not found"))
 		return "", false
 	}

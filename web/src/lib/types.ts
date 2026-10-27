@@ -768,3 +768,30 @@ export interface Template {
 	nodeCount: number;
 	flow: Definition;
 }
+
+/** The copilot's conversation for a flow (internal/flow/copilot.go). */
+export interface CopilotState {
+	status: 'idle' | 'thinking' | 'editing';
+	entries: CopilotEntry[];
+	pending: CopilotCall[];
+	queued?: number;
+}
+
+export interface CopilotEntry {
+	seq: number;
+	kind: 'user' | 'assistant' | 'tool' | 'error';
+	text?: string;
+	messageId?: string;
+	tool?: string;
+	callId?: string;
+	input?: unknown;
+	status?: 'running' | 'done' | 'failed';
+	at: string;
+}
+
+export interface CopilotCall {
+	id: string;
+	name: string;
+	input: Record<string, unknown>;
+	clientId: string;
+}

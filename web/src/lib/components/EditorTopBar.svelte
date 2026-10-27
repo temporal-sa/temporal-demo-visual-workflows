@@ -7,6 +7,7 @@
 	import Minimize2 from '@lucide/svelte/icons/minimize-2';
 	import Settings2 from '@lucide/svelte/icons/settings-2';
 	import Wand from '@lucide/svelte/icons/wand-sparkles';
+	import Sparkles from '@lucide/svelte/icons/sparkles';
 	import ArrowRightFromLine from '@lucide/svelte/icons/arrow-right-from-line';
 	import ArrowDownFromLine from '@lucide/svelte/icons/arrow-down-from-line';
 	import Share2 from '@lucide/svelte/icons/share-2';
@@ -148,6 +149,7 @@
 				>
 					{#if lr}<ArrowRightFromLine />{:else}<ArrowDownFromLine />{/if}
 				</Button>
+				<Button variant={app.copilotOpen ? 'secondary' : 'ghost'} size="sm" class="mono text-xs" data-tip="Build and change this flow with Claude" onclick={() => (app.copilotOpen = !app.copilotOpen)}><Sparkles /> Copilot</Button>
 				<Button variant="ghost" size="sm" class="mono text-xs" data-tip="Lay the flow out automatically" onclick={() => app.requestTidy()}><Wand /> Tidy up</Button>
 				<label class="mono flex items-center gap-1 pr-1 text-[0.62rem] text-[var(--slate-300)]" data-tip="Tidy up after each new connection">
 					<Switch checked={app.autoTidy} onCheckedChange={(v) => app.setAutoTidy(v)} class="scale-75" aria-label="Tidy up after each new connection" />

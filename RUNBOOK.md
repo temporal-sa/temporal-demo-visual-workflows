@@ -103,6 +103,16 @@ This beat calls the Claude API. On tmprl-demo.cloud the key is configured; local
 
 What the agent decides varies from run to run, so the refund question may not come up.
 
+### 6. Optional: build a flow with the copilot
+
+This beat calls the Claude API too.
+
+1. Create a new workflow and press **Copilot** in the top bar.
+2. Ask: "Charge a card with Stripe, then post the receipt to Slack. If the charge fails, alert ops." Steps appear on the canvas as the copilot works; each is marked **copilot**, and the flow shows **unsaved**.
+3. Say: "The conversation is a Workflow. Each model call is an Activity. The tools that edit the canvas are callback tools: the Workflow waits, durably, for my browser to make the edit and send back the result with an Update."
+4. While it's working, reload the page. The copilot carries on from the call it was waiting on.
+5. Press **Save**, or hover your message and press **Undo this turn**.
+
 ## Show it in code
 
 All links point at commit [`e0efa24`](https://github.com/temporal-sa/temporal-demo-visual-workflows/commit/e0efa24dd6b5105ccdefca94d3fc4a54a15e32bc). Open a file locally with `code -g <path>:<line>`.

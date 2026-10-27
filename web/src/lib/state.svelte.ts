@@ -1,3 +1,4 @@
+import { SvelteSet } from 'svelte/reactivity';
 import { toast } from 'svelte-sonner';
 import { goto } from '$app/navigation';
 import { api, ApiError } from './api';
@@ -89,6 +90,10 @@ class AppState {
 	customized = $state(false);
 	/** Bumped when nodes or edges are added or removed, or positions are rewritten, so the canvas rebuilds. */
 	structure = $state(0);
+	/** The copilot panel is open. */
+	copilotOpen = $state(false);
+	/** Steps the copilot added or changed since the last save, highlighted on the canvas. */
+	copilotTouched = new SvelteSet<string>();
 	problems = $state<Problem[]>([]);
 	saving = $state(false);
 	private savedSnapshot = $state('');
@@ -145,6 +150,17 @@ class AppState {
 	private setFlow(flow: Definition) {
 		this.flow = normalizeFlow(flow);
 		this.savedSnapshot = JSON.stringify(this.flow);
+		this.problems = [];
+		this.copilotTouched.clear();
+		this.structure++;
+	}
+
+	/** Puts the canvas back as it was (Undo this turn), leaving it unsaved. */
+	restoreCanvas(snapshot: string) {
+		const def = JSON.parse(snapshot) as Definition;
+		if (!this.flow || def.id !== this.flow.id) return;
+		this.flow = normalizeFlow({ ...def, version: this.flow.version, updatedAt: this.flow.updatedAt });
+		this.copilotTouched.clear();
 		this.problems = [];
 		this.structure++;
 	}
@@ -251,6 +267,7 @@ class AppState {
 			this.problems = [];
 			// Saving a built-in example makes it the user's own copy.
 			if (this.builtIn) this.customized = true;
+			this.copilotTouched.clear();
 			shell.loadFlows();
 			toast.success(`Saved version ${saved.version}`);
 			return true;

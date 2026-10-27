@@ -3,6 +3,7 @@ import type {
 	StartResult,
 	WithStart,
 	AgentState,
+	CopilotState,
 	Definition,
 	FlowDetail,
 	FlowSummary,
@@ -68,6 +69,15 @@ export const api = {
 	getFlow: (id: string) => request<FlowDetail>('GET', `/api/flows/${enc(id)}`),
 	saveFlow: (d: Definition) => request<Definition>('PUT', `/api/flows/${enc(d.id)}`, d),
 	deleteFlow: (id: string) => request<void>('DELETE', `/api/flows/${enc(id)}`),
+	/** Checks a flow as saving would, without saving it. */
+	validateFlow: (d: Definition) => request<{ problems: Problem[] }>('POST', '/api/flows/validate', d),
+	copilot: (id: string) => request<CopilotState>('GET', `/api/flows/${enc(id)}/copilot`),
+	copilotSend: (id: string, m: { id: string; text: string; flow: unknown; clientId: string }) =>
+		request<void>('POST', `/api/flows/${enc(id)}/copilot/messages`, m),
+	copilotResult: (id: string, r: { callId: string; result?: unknown; error?: string }) =>
+		request<unknown>('POST', `/api/flows/${enc(id)}/copilot/results`, r),
+	copilotStop: (id: string) => request<void>('POST', `/api/flows/${enc(id)}/copilot/stop`),
+	copilotReset: (id: string) => request<void>('POST', `/api/flows/${enc(id)}/copilot/reset`),
 	/** Drops the user's copy of a built-in example. */
 	resetFlow: (id: string) => request<FlowDetail>('POST', `/api/flows/${enc(id)}/reset`),
 	versions: (id: string) => request<FlowVersion[]>('GET', `/api/flows/${enc(id)}/versions`),

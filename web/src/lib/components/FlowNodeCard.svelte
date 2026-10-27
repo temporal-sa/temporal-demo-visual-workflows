@@ -25,6 +25,7 @@
 	import { handlesFor, isEntry } from '$lib/types';
 	import { hasBody } from '$lib/loops';
 	import { app } from '$lib/state.svelte';
+	import Sparkles from '@lucide/svelte/icons/sparkles';
 	import { nodeTone, waitingText } from '$lib/status';
 
 	let { id, data, selected }: NodeProps<CardNode> = $props();
@@ -46,6 +47,8 @@
 	const counts = $derived(lane && data.node.type !== 'onStart');
 
 	const isSaga = $derived(data.node.type === 'saga');
+	// Added or changed by the copilot since the last save.
+	const touched = $derived(!data.run && app.copilotTouched.has(id));
 	// Outcome labels show where an edge leaves, or while the step is
 	// selected; a run shows the outcome it took.
 	const showLabel = (h: string) => selected || !!data.connected?.includes(h) || (!!rs && rs.handle === h);
@@ -70,7 +73,7 @@
 	class="group relative w-[248px] border bg-[#15171f]/95 text-left shadow-[0_8px_24px_-12px_rgba(0,0,0,.8)] transition-colors"
 	class:pulse={tone.pulse}
 	class:opacity-50={rs?.status === 'skipped'}
-	style:border-color={problems.length ? 'var(--red)' : !rs && selected ? 'var(--uv-light)' : lane && !rs ? 'color-mix(in srgb, var(--purple) 55%, #2b3348)' : tone.border}
+	style:border-color={problems.length ? 'var(--red)' : !rs && selected ? 'var(--uv-light)' : touched ? 'color-mix(in srgb, var(--uv-light) 70%, #2b3348)' : lane && !rs ? 'color-mix(in srgb, var(--purple) 55%, #2b3348)' : tone.border}
 	style:outline={selected ? '2px solid var(--uv-light)' : 'none'}
 	style:outline-offset="3px"
 	style:--pulse-color={tone.glow}
@@ -83,6 +86,9 @@
 
 	{#if data.stranger}
 		<div class="mono absolute -top-4 left-0 text-[0.56rem] text-[var(--slate-500)]">not in {data.stranger}</div>
+	{/if}
+	{#if touched}
+		<div class="mono absolute -top-4 right-0 flex items-center gap-0.5 text-[0.56rem] text-[var(--uv-light)]" data-tip="Added or changed by the copilot; unsaved"><Sparkles class="size-2.5" />copilot</div>
 	{/if}
 	<div class="flex items-start gap-2.5 px-3 pt-2.5 pb-2">
 		<div

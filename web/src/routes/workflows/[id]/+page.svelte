@@ -13,6 +13,8 @@
 	import RunInspector from '$lib/components/RunInspector.svelte';
 	import FlowSettingsSheet from '$lib/components/FlowSettingsSheet.svelte';
 	import VersionHistorySheet from '$lib/components/VersionHistorySheet.svelte';
+	import CopilotPanel from '$lib/components/CopilotPanel.svelte';
+	import { copilot } from '$lib/copilot/session.svelte';
 	import { app } from '$lib/state.svelte';
 	import { confirmAction } from '$lib/confirm.svelte';
 
@@ -64,6 +66,13 @@
 
 	// Selecting a step always shows the inspector, since that is where its actions live.
 	const inspectorOpen = $derived(!app.rightCollapsed || app.selectedNodeId !== null);
+
+	// Follow the copilot while this flow is open, so a tool call it made
+	// before a reload is carried out even with the panel closed.
+	$effect(() => {
+		if (app.flow?.id === flowId) copilot.attach(flowId);
+		return () => copilot.detach();
+	});
 
 	onMount(() => {
 		const onKey = (e: KeyboardEvent) => {
@@ -126,6 +135,9 @@
 					{#if app.mode === 'build'}<BuildInspector />{:else}<RunInspector />{/if}
 				{/if}
 			</aside>
+			{#if app.copilotOpen && app.mode === 'build'}
+				<aside class="w-[360px] shrink-0 border-l border-[var(--line)] bg-[#111218]/90"><CopilotPanel /></aside>
+			{/if}
 		{/if}
 	</div>
 </div>

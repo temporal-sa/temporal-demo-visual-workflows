@@ -26,14 +26,15 @@ type Registry interface {
 	RegisterActivity(a any)
 }
 
-// Register adds the flow Workflows and their Activities. Both Workflows are
-// Pinned: a run finishes on the worker build it started on, so a new build
-// never replays an old run's history and no patching is needed. Keyed runs
-// move to the newest build when they continue as new.
+// Register adds the flow Workflows, the copilot, and their Activities. All
+// are Pinned: a run finishes on the worker build it started on, so a new
+// build never replays an old run's history and no patching is needed. Keyed
+// runs move to the newest build when they continue as new.
 func Register(r Registry, acts *Activities) {
 	pinned := workflow.RegisterOptions{VersioningBehavior: workflow.VersioningBehaviorPinned}
 	r.RegisterWorkflowWithOptions(FlowWorkflow, pinned)
 	r.RegisterWorkflowWithOptions(AgentWorkflow, pinned)
+	r.RegisterWorkflowWithOptions(CopilotWorkflow, pinned)
 	r.RegisterActivity(acts)
 }
 

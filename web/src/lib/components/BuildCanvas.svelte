@@ -8,7 +8,8 @@
 	import FlowNodeCard, { type CardNode } from './FlowNodeCard.svelte';
 	import GhostNode from './GhostNode.svelte';
 	import { cardSagas, ghostNodes, isGhost, sagaEdges } from '$lib/sagaCanvas';
-	import { compensationSteps, forgetSteps, joinSaga, leaveSaga, sagaRoles, setCompensation } from '$lib/saga';
+	import { compensationSteps, joinSaga, leaveSaga, sagaRoles, setCompensation } from '$lib/saga';
+	import { addEdge, removeSteps } from '$lib/edit';
 	import FitOnResize from './FitOnResize.svelte';
 	import LaneBands from './LaneBands.svelte';
 	import Scopes from './Scopes.svelte';
@@ -166,9 +167,7 @@
 			if (app.autoTidy) app.requestTidy(c.source);
 			return;
 		}
-		const handle = c.sourceHandle || 'out';
-		const exists = flow.edges.some((e) => e.source === c.source && e.target === c.target && (e.sourceHandle || 'out') === handle);
-		if (!exists) flow.edges.push({ id: `e${Math.random().toString(36).slice(2, 9)}`, source: c.source, target: c.target, sourceHandle: handle });
+		addEdge(flow, c.source, c.target, c.sourceHandle || 'out');
 		app.structure++;
 		// Auto tidy-up: lay the flow out again, keeping your place on the canvas.
 		if (app.autoTidy) app.requestTidy(c.source);
@@ -204,9 +203,8 @@
 				}
 			}
 		}
-		forgetSteps(flow, nodeIds);
-		flow.nodes = flow.nodes.filter((n) => !nodeIds.has(n.id));
-		flow.edges = flow.edges.filter((e) => !edgeIds.has(e.id) && !nodeIds.has(e.source) && !nodeIds.has(e.target));
+		removeSteps(flow, nodeIds);
+		flow.edges = flow.edges.filter((e) => !edgeIds.has(e.id));
 		if (app.selectedNodeId && nodeIds.has(app.selectedNodeId)) app.selectedNodeId = null;
 		app.structure++;
 	}

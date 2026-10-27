@@ -203,6 +203,9 @@ type LLMRequest struct {
 	System   string            `json:"system"`
 	Tools    []LLMTool         `json:"tools"`
 	Messages []json.RawMessage `json:"messages"`
+	// Cache marks the prompt for caching up to its last block: a long
+	// conversation resends the same system prompt, tools and history.
+	Cache bool `json:"cache,omitempty"`
 }
 
 type LLMTool struct {
@@ -249,12 +252,17 @@ func (a *Activities) CallClaude(ctx context.Context, req LLMRequest) (LLMRespons
 
 	// A model turn can take a minute or more, so heartbeat while it runs.
 	defer keepAlive(ctx, "waiting for Claude")()
+	var cache anthropic.BetaCacheControlEphemeralParam
+	if req.Cache {
+		cache = anthropic.NewBetaCacheControlEphemeralParam()
+	}
 	resp, err := a.Claude.Beta.Messages.New(ctx, anthropic.BetaMessageNewParams{
-		Model:     anthropic.Model(a.Model),
-		MaxTokens: 16000,
-		System:    []anthropic.BetaTextBlockParam{{Text: req.System}},
-		Tools:     tools,
-		Messages:  messages,
+		CacheControl: cache,
+		Model:        anthropic.Model(a.Model),
+		MaxTokens:    16000,
+		System:       []anthropic.BetaTextBlockParam{{Text: req.System}},
+		Tools:        tools,
+		Messages:     messages,
 		// Summarized thinking gives the run view a readable reasoning trace.
 		Thinking: anthropic.BetaThinkingConfigParamUnion{OfAdaptive: &anthropic.BetaThinkingConfigAdaptiveParam{
 			Display: anthropic.BetaThinkingConfigAdaptiveDisplaySummarized,
