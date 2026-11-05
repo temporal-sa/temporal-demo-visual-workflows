@@ -34,6 +34,7 @@ type Config struct {
 	LibraryScope    string
 	Namespace       string
 	TemporalUIURL   string
+	UINamespace     string // the namespace Temporal UI links open
 	SandboxURL      string
 	CallbackBaseURL string
 	// WorkerMode is "serverless" (scales to zero) or
@@ -140,7 +141,7 @@ func (s *Server) getSession(w http.ResponseWriter, r *http.Request, u user) {
 		"displayName":   u.Name,
 		"signedIn":      u.SignedIn,
 		"taskQueue":     s.cfg.TaskQueue,
-		"namespace":     s.cfg.Namespace,
+		"namespace":     s.cfg.UINamespace,
 		"temporalUiUrl": s.cfg.TemporalUIURL,
 		"workerMode":    s.cfg.WorkerMode,
 		"rateLimits":    s.cfg.SharedLimits,

@@ -212,6 +212,7 @@ Every process reads Temporal settings from the standard environment variables (`
 | `GITHUB_TOKEN`, `GITHUB_API_URL` | workers | the sandbox's GitHub. Set a fine-grained token with Issues and Actions access to use GitHub. |
 | `CALLBACK_BASE_URL` | app | the request's host; set it when callers reach the app on an internal address |
 | `TEMPORAL_UI_URL` | app | `http://localhost:8233` |
+| `TEMPORAL_UI_NAMESPACE` | app | the connected namespace |
 | `SESSION_SECRET` | app | `make dev` sets a fixed local value; set your own when running more than one replica |
 | `TRUST_AUTH_HEADERS` | app | `false`; set it to `true` only behind the catalog's SSO ingress |
 | `RATE_LIMITS` | app, workers | unset; rate limits shared by every run, as `crm=5/s,payments=30/m`. `make dev` sets `metered=5/s`. Each is the task queue `<TASK_QUEUE>-limit-<name>`, which the worker polls with a server-enforced rate. |

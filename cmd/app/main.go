@@ -8,6 +8,7 @@ import (
 	"errors"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"go.temporal.io/sdk/worker"
@@ -50,7 +51,8 @@ func main() {
 		LibraryTaskQueue: temporalx.LibraryTaskQueue(),
 		LibraryScope:     temporalx.BaseTaskQueue(),
 		Namespace:        namespace,
-		TemporalUIURL:    envOr("TEMPORAL_UI_URL", "http://localhost:8233"),
+		TemporalUIURL:    strings.TrimRight(envOr("TEMPORAL_UI_URL", "http://localhost:8233"), "/"),
+		UINamespace:      envOr("TEMPORAL_UI_NAMESPACE", namespace),
 		SandboxURL:       envOr("SANDBOX_URL", "http://localhost:8090"),
 		CallbackBaseURL:  os.Getenv("CALLBACK_BASE_URL"),
 		WorkerMode:       envOr("WORKER_MODE", "long-lived"),

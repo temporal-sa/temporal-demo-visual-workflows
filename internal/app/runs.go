@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"slices"
 	"strconv"
 	"strings"
@@ -401,7 +402,7 @@ func (s *Server) getRun(w http.ResponseWriter, r *http.Request, u user) {
 	}
 	writeJSON(w, http.StatusOK, map[string]any{
 		"workflowId":        wid,
-		"temporalUrl":       fmt.Sprintf("%s/namespaces/%s/workflows/%s", s.cfg.TemporalUIURL, s.cfg.Namespace, wid),
+		"temporalUrl":       fmt.Sprintf("%s/namespaces/%s/workflows/%s", s.cfg.TemporalUIURL, url.PathEscape(s.cfg.UINamespace), url.PathEscape(wid)),
 		"execution":         execution,
 		"flow":              in.Flow,
 		"callbackUrl":       callback,

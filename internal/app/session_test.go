@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"io"
 	"log/slog"
 	"net/http"
@@ -40,4 +41,15 @@ func TestSignedInUsersAreKeyedByEmail(t *testing.T) {
 
 	// A crashable workspace opens the user's library on the base queue.
 	require.Equal(t, "vflow-visual-workflows-"+a.Key+"-library", s.libraryID(a.Key))
+}
+
+func TestSessionNamesTheUINamespace(t *testing.T) {
+	s := NewServer(Config{Namespace: "default", UINamespace: "demo.acct", TemporalUIURL: "https://cloud.temporal.io"},
+		nil, slog.New(slog.NewTextHandler(io.Discard, nil)), nil)
+	w := httptest.NewRecorder()
+	s.getSession(w, httptest.NewRequest(http.MethodGet, "/api/session", nil), user{})
+	var got map[string]any
+	require.NoError(t, json.Unmarshal(w.Body.Bytes(), &got))
+	require.Equal(t, "demo.acct", got["namespace"])
+	require.Equal(t, "https://cloud.temporal.io", got["temporalUiUrl"])
 }
